@@ -279,6 +279,10 @@
     "defaultMessage": "Age range",
     "description": "Filter by age rating: range label"
   },
+  "67VpHr": {
+    "defaultMessage": "Other publishers",
+    "description": "Series view table: alternate publishers header"
+  },
   "6F1ebQ": {
     "defaultMessage": "HTTP Server",
     "description": "Server settings: section header for HTTP server"
@@ -1663,6 +1667,10 @@
     "defaultMessage": "Created",
     "description": "Series view table: date created header"
   },
+  "e/YJO6": {
+    "defaultMessage": "Serialization",
+    "description": "Series view table: serialization header"
+  },
   "e8DJzj": {
     "defaultMessage": "Theme",
     "description": "Theme selector button: tooltip"
@@ -1670,6 +1678,10 @@
   "eDA9Gm": {
     "defaultMessage": "Generated poster size",
     "description": "Server settings: selection of poster size"
+  },
+  "eEOGfq": {
+    "defaultMessage": "Score",
+    "description": "Series view table: score header"
   },
   "eRJOa6": {
     "defaultMessage": "Server base URL",
@@ -2170,6 +2182,10 @@
   "lvCpSX": {
     "defaultMessage": "Actions",
     "description": "User table header: user actions"
+  },
+  "lwtvpH": {
+    "defaultMessage": "Release date",
+    "description": "Series view table: release date header"
   },
   "lyknmW": {
     "defaultMessage": "Open",

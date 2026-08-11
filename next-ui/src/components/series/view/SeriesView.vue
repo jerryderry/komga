@@ -303,6 +303,55 @@ const allRows = computed(() => {
       data: [{ text: props.series.metadata.publisher }],
     }
 
+  if (props.series.metadata.alternatePublishers.length > 0)
+    rows['alternatePublishers'] = {
+      header: intl.formatMessage({
+        description: 'Series view table: alternate publishers header',
+        defaultMessage: 'Other publishers',
+        id: '67VpHr',
+      }),
+      data: props.series.metadata.alternatePublishers.map((it) => ({ text: it })),
+    }
+
+  if (props.series.metadata.serialization)
+    rows['serialization'] = {
+      header: intl.formatMessage({
+        description: 'Series view table: serialization header',
+        defaultMessage: 'Serialization',
+        id: 'e/YJO6',
+      }),
+      data: [{ text: props.series.metadata.serialization }],
+    }
+
+  if (props.series.metadata.score != null)
+    rows['score'] = {
+      header: intl.formatMessage({
+        description: 'Series view table: score header',
+        defaultMessage: 'Score',
+        id: 'eEOGfq',
+      }),
+      data: [
+        { text: intl.formatNumber(props.series.metadata.score, { maximumFractionDigits: 1 }) },
+      ],
+    }
+
+  if (props.series.metadata.releaseDate)
+    rows['releaseDate'] = {
+      header: intl.formatMessage({
+        description: 'Series view table: release date header',
+        defaultMessage: 'Release date',
+        id: 'lwtvpH',
+      }),
+      data: [
+        {
+          text: intl.formatDate(props.series.metadata.releaseDate, {
+            dateStyle: 'medium',
+            timeZone: 'UTC',
+          }),
+        },
+      ],
+    }
+
   if (props.series.metadata.genres.length > 0)
     rows['genres'] = {
       header: intl.formatMessage({
@@ -369,7 +418,18 @@ const allRows = computed(() => {
   return rows
 })
 
-const displayDefault = ['writer', 'penciller', 'publisher', 'genre', 'tags', 'links']
+const displayDefault = [
+  'writer',
+  'penciller',
+  'publisher',
+  'alternatePublishers',
+  'serialization',
+  'score',
+  'releaseDate',
+  'genre',
+  'tags',
+  'links',
+]
 const tableRows = computed(() =>
   Object.entries(allRows.value)
     .filter(([key]) => displayDefault.includes(key))

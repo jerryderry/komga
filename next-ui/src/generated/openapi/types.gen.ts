@@ -1043,6 +1043,8 @@ export type SeriesDto = {
 export type SeriesMetadataDto = {
     ageRating?: number;
     ageRatingLock: boolean;
+    alternatePublishers: Array<string>;
+    alternatePublishersLock: boolean;
     alternateTitles: Array<AlternateTitleDto>;
     alternateTitlesLock: boolean;
     created: Date;
@@ -1057,6 +1059,12 @@ export type SeriesMetadataDto = {
     publisherLock: boolean;
     readingDirection: string;
     readingDirectionLock: boolean;
+    releaseDate?: Date;
+    releaseDateLock: boolean;
+    score?: number;
+    scoreLock: boolean;
+    serialization: string;
+    serializationLock: boolean;
     sharingLabels: Array<string>;
     sharingLabelsLock: boolean;
     status: string;
@@ -1079,6 +1087,8 @@ export type SeriesMetadataDto = {
 export type SeriesMetadataUpdateDto = {
     ageRating?: number;
     ageRatingLock?: boolean;
+    alternatePublishers?: Array<string>;
+    alternatePublishersLock?: boolean;
     alternateTitles?: Array<AlternateTitleUpdateDto>;
     alternateTitlesLock?: boolean;
     genres?: Array<string>;
@@ -1091,6 +1101,12 @@ export type SeriesMetadataUpdateDto = {
     publisherLock?: boolean;
     readingDirection?: ReadingDirectionEnum;
     readingDirectionLock?: boolean;
+    releaseDate?: Date;
+    releaseDateLock?: boolean;
+    score?: number;
+    scoreLock?: boolean;
+    serialization?: string;
+    serializationLock?: boolean;
     sharingLabels?: Array<string>;
     sharingLabelsLock?: boolean;
     status?: ItemsEnum;
