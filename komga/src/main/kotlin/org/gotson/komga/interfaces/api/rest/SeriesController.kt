@@ -699,8 +699,21 @@ class SeriesController(
           readingDirectionLock = readingDirectionLock ?: existing.readingDirectionLock,
           publisher = publisher ?: existing.publisher,
           publisherLock = publisherLock ?: existing.publisherLock,
+          alternatePublishers =
+            if (isSet("alternatePublishers")) {
+              if (alternatePublishers != null) alternatePublishers!! else emptySet()
+            } else {
+              existing.alternatePublishers
+            },
+          alternatePublishersLock = alternatePublishersLock ?: existing.alternatePublishersLock,
+          serialization = serialization ?: existing.serialization,
+          serializationLock = serializationLock ?: existing.serializationLock,
           ageRating = if (isSet("ageRating")) ageRating else existing.ageRating,
           ageRatingLock = ageRatingLock ?: existing.ageRatingLock,
+          score = if (isSet("score")) score else existing.score,
+          scoreLock = scoreLock ?: existing.scoreLock,
+          releaseDate = if (isSet("releaseDate")) releaseDate else existing.releaseDate,
+          releaseDateLock = releaseDateLock ?: existing.releaseDateLock,
           genres =
             if (isSet("genres")) {
               if (genres != null) genres!! else emptySet()

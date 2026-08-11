@@ -1,6 +1,7 @@
 package org.gotson.komga.domain.model
 
 import org.gotson.komga.language.lowerNotBlank
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class SeriesMetadata(
@@ -10,7 +11,11 @@ class SeriesMetadata(
   summary: String = "",
   val readingDirection: ReadingDirection? = null,
   publisher: String = "",
+  alternatePublishers: Set<String> = emptySet(),
+  serialization: String = "",
   val ageRating: Int? = null,
+  val score: Float? = null,
+  val releaseDate: LocalDate? = null,
   language: String = "",
   genres: Set<String> = emptySet(),
   tags: Set<String> = emptySet(),
@@ -24,7 +29,11 @@ class SeriesMetadata(
   val summaryLock: Boolean = false,
   val readingDirectionLock: Boolean = false,
   val publisherLock: Boolean = false,
+  val alternatePublishersLock: Boolean = false,
+  val serializationLock: Boolean = false,
   val ageRatingLock: Boolean = false,
+  val scoreLock: Boolean = false,
+  val releaseDateLock: Boolean = false,
   val languageLock: Boolean = false,
   val genresLock: Boolean = false,
   val tagsLock: Boolean = false,
@@ -40,10 +49,15 @@ class SeriesMetadata(
   val titleSort = titleSort.trim()
   val summary = summary.trim()
   val publisher = publisher.trim()
+  val serialization = serialization.trim()
   val language = BCP47TagValidator.normalize(language.trim())
   val tags = tags.lowerNotBlank().toSet()
   val genres = genres.lowerNotBlank().toSet()
   val sharingLabels = sharingLabels.lowerNotBlank().toSet()
+
+  // Publisher names are proper nouns, so unlike genres/tags/sharingLabels they keep
+  // their casing and are only trimmed and de-blanked.
+  val alternatePublishers = alternatePublishers.mapNotNull { it.trim().ifBlank { null } }.toSet()
 
   fun copy(
     status: Status = this.status,
@@ -52,7 +66,11 @@ class SeriesMetadata(
     summary: String = this.summary,
     readingDirection: ReadingDirection? = this.readingDirection,
     publisher: String = this.publisher,
+    alternatePublishers: Set<String> = this.alternatePublishers,
+    serialization: String = this.serialization,
     ageRating: Int? = this.ageRating,
+    score: Float? = this.score,
+    releaseDate: LocalDate? = this.releaseDate,
     language: String = this.language,
     genres: Set<String> = this.genres,
     tags: Set<String> = this.tags,
@@ -66,7 +84,11 @@ class SeriesMetadata(
     summaryLock: Boolean = this.summaryLock,
     readingDirectionLock: Boolean = this.readingDirectionLock,
     publisherLock: Boolean = this.publisherLock,
+    alternatePublishersLock: Boolean = this.alternatePublishersLock,
+    serializationLock: Boolean = this.serializationLock,
     ageRatingLock: Boolean = this.ageRatingLock,
+    scoreLock: Boolean = this.scoreLock,
+    releaseDateLock: Boolean = this.releaseDateLock,
     languageLock: Boolean = this.languageLock,
     genresLock: Boolean = this.genresLock,
     tagsLock: Boolean = this.tagsLock,
@@ -84,7 +106,11 @@ class SeriesMetadata(
     summary = summary,
     readingDirection = readingDirection,
     publisher = publisher,
+    alternatePublishers = alternatePublishers,
+    serialization = serialization,
     ageRating = ageRating,
+    score = score,
+    releaseDate = releaseDate,
     language = language,
     genres = genres,
     tags = tags,
@@ -98,7 +124,11 @@ class SeriesMetadata(
     summaryLock = summaryLock,
     readingDirectionLock = readingDirectionLock,
     publisherLock = publisherLock,
+    alternatePublishersLock = alternatePublishersLock,
+    serializationLock = serializationLock,
     ageRatingLock = ageRatingLock,
+    scoreLock = scoreLock,
+    releaseDateLock = releaseDateLock,
     languageLock = languageLock,
     genresLock = genresLock,
     tagsLock = tagsLock,
@@ -125,5 +155,6 @@ class SeriesMetadata(
     WEBTOON,
   }
 
-  override fun toString(): String = "SeriesMetadata(status=$status, readingDirection=$readingDirection, ageRating=$ageRating, totalBookCount=$totalBookCount, links=$links, alternateTitles=$alternateTitles, statusLock=$statusLock, titleLock=$titleLock, titleSortLock=$titleSortLock, summaryLock=$summaryLock, readingDirectionLock=$readingDirectionLock, publisherLock=$publisherLock, ageRatingLock=$ageRatingLock, languageLock=$languageLock, genresLock=$genresLock, tagsLock=$tagsLock, totalBookCountLock=$totalBookCountLock, sharingLabelsLock=$sharingLabelsLock, linksLock=$linksLock, alternateTitlesLock=$alternateTitlesLock, seriesId='$seriesId', createdDate=$createdDate, lastModifiedDate=$lastModifiedDate, title='$title', titleSort='$titleSort', summary='$summary', publisher='$publisher', language='$language', tags=$tags, genres=$genres, sharingLabels=$sharingLabels)"
+  override fun toString(): String =
+    "SeriesMetadata(status=$status, readingDirection=$readingDirection, ageRating=$ageRating, score=$score, releaseDate=$releaseDate, totalBookCount=$totalBookCount, links=$links, alternateTitles=$alternateTitles, statusLock=$statusLock, titleLock=$titleLock, titleSortLock=$titleSortLock, summaryLock=$summaryLock, readingDirectionLock=$readingDirectionLock, publisherLock=$publisherLock, alternatePublishersLock=$alternatePublishersLock, serializationLock=$serializationLock, ageRatingLock=$ageRatingLock, scoreLock=$scoreLock, releaseDateLock=$releaseDateLock, languageLock=$languageLock, genresLock=$genresLock, tagsLock=$tagsLock, totalBookCountLock=$totalBookCountLock, sharingLabelsLock=$sharingLabelsLock, linksLock=$linksLock, alternateTitlesLock=$alternateTitlesLock, seriesId='$seriesId', createdDate=$createdDate, lastModifiedDate=$lastModifiedDate, title='$title', titleSort='$titleSort', summary='$summary', publisher='$publisher', alternatePublishers=$alternatePublishers, serialization='$serialization', language='$language', tags=$tags, genres=$genres, sharingLabels=$sharingLabels)"
 }

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.PositiveOrZero
 import org.gotson.komga.domain.model.SeriesMetadata
 import org.gotson.komga.infrastructure.validation.NullOrBlankOrBCP47
 import org.gotson.komga.infrastructure.validation.NullOrNotBlank
+import java.time.LocalDate
 import kotlin.properties.Delegates
 
 class SeriesMetadataUpdateDto {
@@ -34,6 +35,32 @@ class SeriesMetadataUpdateDto {
   var publisher: String? = null
 
   var publisherLock: Boolean? = null
+
+  var alternatePublishers: Set<String>?
+    by Delegates.observable(null) { prop, _, _ ->
+      isSet[prop.name] = true
+    }
+
+  var alternatePublishersLock: Boolean? = null
+
+  var serialization: String? = null
+
+  var serializationLock: Boolean? = null
+
+  @get:PositiveOrZero
+  var score: Float?
+    by Delegates.observable(null) { prop, _, _ ->
+      isSet[prop.name] = true
+    }
+
+  var scoreLock: Boolean? = null
+
+  var releaseDate: LocalDate?
+    by Delegates.observable(null) { prop, _, _ ->
+      isSet[prop.name] = true
+    }
+
+  var releaseDateLock: Boolean? = null
 
   var readingDirection: SeriesMetadata.ReadingDirection?
     by Delegates.observable(null) { prop, _, _ ->

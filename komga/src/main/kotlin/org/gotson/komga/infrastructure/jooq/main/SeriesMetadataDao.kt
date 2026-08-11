@@ -31,10 +31,11 @@ class SeriesMetadataDao(
   private val sl = Tables.SERIES_METADATA_SHARING
   private val slk = Tables.SERIES_METADATA_LINK
   private val sat = Tables.SERIES_METADATA_ALTERNATE_TITLE
+  private val sap = Tables.SERIES_METADATA_ALTERNATE_PUBLISHER
 
-  override fun findById(seriesId: String): SeriesMetadata = dslRO.findOne(seriesId)!!.toDomain(dslRO.findGenres(seriesId), dslRO.findTags(seriesId), dslRO.findSharingLabels(seriesId), dslRO.findLinks(seriesId), dslRO.findAlternateTitles(seriesId))
+  override fun findById(seriesId: String): SeriesMetadata = dslRO.findOne(seriesId)!!.toDomain(dslRO.findGenres(seriesId), dslRO.findTags(seriesId), dslRO.findSharingLabels(seriesId), dslRO.findLinks(seriesId), dslRO.findAlternateTitles(seriesId), dslRO.findAlternatePublishers(seriesId))
 
-  override fun findByIdOrNull(seriesId: String): SeriesMetadata? = dslRO.findOne(seriesId)?.toDomain(dslRO.findGenres(seriesId), dslRO.findTags(seriesId), dslRO.findSharingLabels(seriesId), dslRO.findLinks(seriesId), dslRO.findAlternateTitles(seriesId))
+  override fun findByIdOrNull(seriesId: String): SeriesMetadata? = dslRO.findOne(seriesId)?.toDomain(dslRO.findGenres(seriesId), dslRO.findTags(seriesId), dslRO.findSharingLabels(seriesId), dslRO.findLinks(seriesId), dslRO.findAlternateTitles(seriesId), dslRO.findAlternatePublishers(seriesId))
 
   private fun DSLContext.findOne(seriesId: String) =
     this
@@ -79,6 +80,13 @@ class SeriesMetadataDao(
       .fetchInto(sat)
       .map { AlternateTitle(it.label, it.title) }
 
+  private fun DSLContext.findAlternatePublishers(seriesId: String) =
+    this
+      .select(sap.PUBLISHER)
+      .from(sap)
+      .where(sap.SERIES_ID.eq(seriesId))
+      .fetchSet(sap.PUBLISHER)
+
   @Transactional
   override fun insert(metadata: SeriesMetadata) {
     dslRW
@@ -91,6 +99,9 @@ class SeriesMetadataDao(
       .set(d.READING_DIRECTION, metadata.readingDirection?.toString())
       .set(d.PUBLISHER, metadata.publisher)
       .set(d.AGE_RATING, metadata.ageRating)
+      .set(d.SCORE, metadata.score)
+      .set(d.RELEASE_DATE, metadata.releaseDate)
+      .set(d.SERIALIZATION, metadata.serialization)
       .set(d.LANGUAGE, metadata.language)
       .set(d.STATUS_LOCK, metadata.statusLock)
       .set(d.TITLE_LOCK, metadata.titleLock)
@@ -107,6 +118,10 @@ class SeriesMetadataDao(
       .set(d.SHARING_LABELS_LOCK, metadata.sharingLabelsLock)
       .set(d.LINKS_LOCK, metadata.linksLock)
       .set(d.ALTERNATE_TITLES_LOCK, metadata.alternateTitlesLock)
+      .set(d.SCORE_LOCK, metadata.scoreLock)
+      .set(d.RELEASE_DATE_LOCK, metadata.releaseDateLock)
+      .set(d.SERIALIZATION_LOCK, metadata.serializationLock)
+      .set(d.ALTERNATE_PUBLISHERS_LOCK, metadata.alternatePublishersLock)
       .execute()
 
     dslRW.insertGenres(metadata)
@@ -114,6 +129,7 @@ class SeriesMetadataDao(
     dslRW.insertSharingLabels(metadata)
     dslRW.insertLinks(metadata)
     dslRW.insertAlternateTitles(metadata)
+    dslRW.insertAlternatePublishers(metadata)
   }
 
   @Transactional
@@ -127,6 +143,9 @@ class SeriesMetadataDao(
       .set(d.READING_DIRECTION, metadata.readingDirection?.toString())
       .set(d.PUBLISHER, metadata.publisher)
       .set(d.AGE_RATING, metadata.ageRating)
+      .set(d.SCORE, metadata.score)
+      .set(d.RELEASE_DATE, metadata.releaseDate)
+      .set(d.SERIALIZATION, metadata.serialization)
       .set(d.LANGUAGE, metadata.language)
       .set(d.STATUS_LOCK, metadata.statusLock)
       .set(d.TITLE_LOCK, metadata.titleLock)
@@ -143,6 +162,10 @@ class SeriesMetadataDao(
       .set(d.SHARING_LABELS_LOCK, metadata.sharingLabelsLock)
       .set(d.LINKS_LOCK, metadata.linksLock)
       .set(d.ALTERNATE_TITLES_LOCK, metadata.alternateTitlesLock)
+      .set(d.SCORE_LOCK, metadata.scoreLock)
+      .set(d.RELEASE_DATE_LOCK, metadata.releaseDateLock)
+      .set(d.SERIALIZATION_LOCK, metadata.serializationLock)
+      .set(d.ALTERNATE_PUBLISHERS_LOCK, metadata.alternatePublishersLock)
       .set(d.LAST_MODIFIED_DATE, LocalDateTime.now(ZoneId.of("Z")))
       .where(d.SERIES_ID.eq(metadata.seriesId))
       .execute()
@@ -172,11 +195,17 @@ class SeriesMetadataDao(
       .where(sat.SERIES_ID.eq(metadata.seriesId))
       .execute()
 
+    dslRW
+      .deleteFrom(sap)
+      .where(sap.SERIES_ID.eq(metadata.seriesId))
+      .execute()
+
     dslRW.insertGenres(metadata)
     dslRW.insertTags(metadata)
     dslRW.insertSharingLabels(metadata)
     dslRW.insertLinks(metadata)
     dslRW.insertAlternateTitles(metadata)
+    dslRW.insertAlternatePublishers(metadata)
   }
 
   private fun DSLContext.insertGenres(metadata: SeriesMetadata) {
@@ -264,6 +293,23 @@ class SeriesMetadataDao(
     }
   }
 
+  private fun DSLContext.insertAlternatePublishers(metadata: SeriesMetadata) {
+    if (metadata.alternatePublishers.isNotEmpty()) {
+      metadata.alternatePublishers.chunked(batchSize).forEach { chunk ->
+        this
+          .batch(
+            this
+              .insertInto(sap, sap.SERIES_ID, sap.PUBLISHER)
+              .values(null as String?, null),
+          ).also { step ->
+            chunk.forEach {
+              step.bind(metadata.seriesId, it)
+            }
+          }.execute()
+      }
+    }
+  }
+
   @Transactional
   override fun delete(seriesId: String) {
     dslRW.deleteFrom(g).where(g.SERIES_ID.eq(seriesId)).execute()
@@ -271,6 +317,7 @@ class SeriesMetadataDao(
     dslRW.deleteFrom(sl).where(sl.SERIES_ID.eq(seriesId)).execute()
     dslRW.deleteFrom(slk).where(slk.SERIES_ID.eq(seriesId)).execute()
     dslRW.deleteFrom(sat).where(sat.SERIES_ID.eq(seriesId)).execute()
+    dslRW.deleteFrom(sap).where(sap.SERIES_ID.eq(seriesId)).execute()
     dslRW.deleteFrom(d).where(d.SERIES_ID.eq(seriesId)).execute()
   }
 
@@ -282,6 +329,7 @@ class SeriesMetadataDao(
       dslRW.deleteFrom(sl).where(sl.SERIES_ID.`in`(it.selectTempStrings())).execute()
       dslRW.deleteFrom(slk).where(slk.SERIES_ID.`in`(it.selectTempStrings())).execute()
       dslRW.deleteFrom(sat).where(sat.SERIES_ID.`in`(it.selectTempStrings())).execute()
+      dslRW.deleteFrom(sap).where(sap.SERIES_ID.`in`(it.selectTempStrings())).execute()
       dslRW.deleteFrom(d).where(d.SERIES_ID.`in`(it.selectTempStrings())).execute()
     }
   }
@@ -294,6 +342,7 @@ class SeriesMetadataDao(
     sharingLabels: Set<String>,
     links: List<WebLink>,
     alternateTitles: List<AlternateTitle>,
+    alternatePublishers: Set<String>,
   ) = SeriesMetadata(
     status = SeriesMetadata.Status.valueOf(status),
     title = title,
@@ -304,7 +353,11 @@ class SeriesMetadataDao(
         SeriesMetadata.ReadingDirection.valueOf(readingDirection)
       },
     publisher = publisher,
+    alternatePublishers = alternatePublishers,
+    serialization = serialization,
     ageRating = ageRating,
+    score = score,
+    releaseDate = releaseDate,
     language = language,
     genres = genres,
     tags = tags,
@@ -318,7 +371,11 @@ class SeriesMetadataDao(
     summaryLock = summaryLock,
     readingDirectionLock = readingDirectionLock,
     publisherLock = publisherLock,
+    alternatePublishersLock = alternatePublishersLock,
+    serializationLock = serializationLock,
     ageRatingLock = ageRatingLock,
+    scoreLock = scoreLock,
+    releaseDateLock = releaseDateLock,
     languageLock = languageLock,
     genresLock = genresLock,
     tagsLock = tagsLock,

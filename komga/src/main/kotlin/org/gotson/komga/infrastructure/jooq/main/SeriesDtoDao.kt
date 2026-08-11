@@ -69,6 +69,7 @@ class SeriesDtoDao(
   private val sl = Tables.SERIES_METADATA_SHARING
   private val slk = Tables.SERIES_METADATA_LINK
   private val sat = Tables.SERIES_METADATA_ALTERNATE_TITLE
+  private val sap = Tables.SERIES_METADATA_ALTERNATE_PUBLISHER
   private val bma = Tables.BOOK_METADATA_AGGREGATION
   private val bmaa = Tables.BOOK_METADATA_AGGREGATION_AUTHOR
   private val bmat = Tables.BOOK_METADATA_AGGREGATION_TAG
@@ -309,6 +310,7 @@ class SeriesDtoDao(
     lateinit var sharingLabels: Map<String, List<String>>
     lateinit var links: Map<String, List<WebLinkDto>>
     lateinit var alternateTitles: Map<String, List<AlternateTitleDto>>
+    lateinit var alternatePublishers: Map<String, List<String>>
     lateinit var aggregatedAuthors: Map<String, List<AuthorDto>>
     lateinit var aggregatedTags: Map<String, List<String>>
 
@@ -343,6 +345,12 @@ class SeriesDtoDao(
           .where(sat.SERIES_ID.`in`(tempTable.selectTempStrings()))
           .groupBy({ it.seriesId }, { AlternateTitleDto(it.label, it.title) })
 
+      alternatePublishers =
+        dsl
+          .selectFrom(sap)
+          .where(sap.SERIES_ID.`in`(tempTable.selectTempStrings()))
+          .groupBy({ it.seriesId }, { it.publisher })
+
       aggregatedAuthors =
         dsl
           .selectFrom(bmaa)
@@ -372,7 +380,7 @@ class SeriesDtoDao(
           booksReadCount,
           booksUnreadCount,
           booksInProgressCount,
-          dr.toDto(genres[sr.id].orEmpty().toSet(), tags[sr.id].orEmpty().toSet(), sharingLabels[sr.id].orEmpty().toSet(), links[sr.id].orEmpty(), alternateTitles[sr.id].orEmpty()),
+          dr.toDto(genres[sr.id].orEmpty().toSet(), tags[sr.id].orEmpty().toSet(), sharingLabels[sr.id].orEmpty().toSet(), links[sr.id].orEmpty(), alternateTitles[sr.id].orEmpty(), alternatePublishers[sr.id].orEmpty().toSet()),
           bmar.toDto(aggregatedAuthors[sr.id].orEmpty(), aggregatedTags[sr.id].orEmpty().toSet()),
         )
       }
@@ -415,6 +423,7 @@ class SeriesDtoDao(
     sharingLabels: Set<String>,
     links: List<WebLinkDto>,
     alternateTitles: List<AlternateTitleDto>,
+    alternatePublishers: Set<String>,
   ) = SeriesMetadataDto(
     status = status,
     statusLock = statusLock,
@@ -430,8 +439,16 @@ class SeriesDtoDao(
     readingDirectionLock = readingDirectionLock,
     publisher = publisher,
     publisherLock = publisherLock,
+    alternatePublishers = alternatePublishers,
+    alternatePublishersLock = alternatePublishersLock,
+    serialization = serialization,
+    serializationLock = serializationLock,
     ageRating = ageRating,
     ageRatingLock = ageRatingLock,
+    score = score,
+    scoreLock = scoreLock,
+    releaseDate = releaseDate,
+    releaseDateLock = releaseDateLock,
     language = language,
     languageLock = languageLock,
     genres = genres,
