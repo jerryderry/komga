@@ -38,6 +38,8 @@ data class SeriesMetadataDto(
   val summaryLock: Boolean,
   val readingDirection: String,
   val readingDirectionLock: Boolean,
+  val bookUnit: String,
+  val bookUnitLock: Boolean,
   val publisher: String,
   val publisherLock: Boolean,
   val alternatePublishers: Set<String>,

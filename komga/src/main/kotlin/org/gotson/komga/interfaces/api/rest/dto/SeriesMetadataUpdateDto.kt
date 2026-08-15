@@ -69,6 +69,13 @@ class SeriesMetadataUpdateDto {
 
   var readingDirectionLock: Boolean? = null
 
+  var bookUnit: SeriesMetadata.BookUnit?
+    by Delegates.observable(null) { prop, _, _ ->
+      isSet[prop.name] = true
+    }
+
+  var bookUnitLock: Boolean? = null
+
   @get:PositiveOrZero
   var ageRating: Int?
     by Delegates.observable(null) { prop, _, _ ->

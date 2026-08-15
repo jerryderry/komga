@@ -61,45 +61,7 @@
           >
             <v-col cols="auto">
               <div class="text-body-medium">
-                <span v-if="isWebtoon">{{
-                  $formatMessage(
-                    {
-                      description: 'Series view: count of chapters in a webtoon series',
-                      defaultMessage: `{count, plural,
-one {# chapter}
-other {# chapters}
-}`,
-                      id: '5Mr64n',
-                    },
-                    { count: series.booksCount },
-                  )
-                }}</span>
-                <span v-else-if="series.metadata.totalBookCount">{{
-                  $formatMessage(
-                    {
-                      description: 'Series view: count of books in series with total count',
-                      defaultMessage: `{total, plural,
-one {{count} / # book}
-other {{count} / # books}
-}`,
-                      id: 'VhMXcu',
-                    },
-                    { count: series.booksCount, total: series.metadata.totalBookCount },
-                  )
-                }}</span>
-                <span v-else>{{
-                  $formatMessage(
-                    {
-                      description: 'Series view: count of books in series',
-                      defaultMessage: `{count, plural,
-one {# book}
-other {# books}
-}`,
-                      id: '4X3RAp',
-                    },
-                    { count: series.booksCount },
-                  )
-                }}</span>
+                <span>{{ bookCountText }}</span>
               </div>
             </v-col>
 
@@ -180,6 +142,13 @@ other {# books}
                   readingDirectionMessages[series.metadata.readingDirection as ReadingDirection],
                 )
               "
+            />
+            <v-chip
+              v-if="series.metadata.bookUnit"
+              size="small"
+              rounded
+              label
+              :text="$formatMessage(bookUnitMessages[series.metadata.bookUnit as BookUnit])"
             />
           </div>
         </v-col>
@@ -262,6 +231,7 @@ import { contributorsRolesMessages } from '@/types/referential'
 import { createOrderCompareFn } from '@/functions/sort'
 import { useSeries } from '@/composables/series/useSeries'
 import { type ReadingDirection, readingDirectionMessages } from '@/types/ReadingDirection'
+import { type BookUnit, bookUnitMessages } from '@/types/BookUnit'
 import { languageDisplayNames } from '@/utils/i18n/locale-helper'
 import { type SeriesStatus, seriesStatusMessages } from '@/types/SeriesStatus'
 import { storeToRefs } from 'pinia'
@@ -282,11 +252,46 @@ const { unreadCount, isRead } = useSeries(() => props.series)
 const { getFirstBookInParentQuery } = useBooks(() => props.series)
 
 const { data: booksOnDeck } = getFirstBookInParentQuery(true)
-// A webtoon has no volumes to count towards, and its files are episodes rather
-// than books. Komga models both the same way - one file is one book - so the
-// distinction is presentational, driven by the reading direction the series
-// already carries.
-const isWebtoon = computed(() => props.series.metadata.readingDirection === 'WEBTOON')
+// Komga stores one file as one book whatever the series is divided into, so counting
+// them is the same operation either way - only the noun changes. An unset unit means
+// the filenames never said, and "book" is the honest word for that.
+const bookUnit = computed(() => props.series.metadata.bookUnit || 'BOOK')
+
+// These messages live here rather than in the template because their nested
+// select/plural produces "}}" sequences, which end a Vue interpolation early.
+const bookCountText = computed(() =>
+  props.series.metadata.totalBookCount
+    ? intl.formatMessage(
+        {
+          description: 'Series view: count of books in series with total count',
+          id: 'W9WB3s',
+          defaultMessage: `{unit, select,
+VOLUME {{total, plural, one {{count} / # volume} other {{count} / # volumes}}}
+CHAPTER {{total, plural, one {{count} / # chapter} other {{count} / # chapters}}}
+ISSUE {{total, plural, one {{count} / # issue} other {{count} / # issues}}}
+other {{total, plural, one {{count} / # book} other {{count} / # books}}}
+}`,
+        },
+        {
+          count: props.series.booksCount,
+          total: props.series.metadata.totalBookCount,
+          unit: bookUnit.value,
+        },
+      )
+    : intl.formatMessage(
+        {
+          description: 'Series view: count of books in series',
+          id: 'RYC0Xa',
+          defaultMessage: `{unit, select,
+VOLUME {{count, plural, one {# volume} other {# volumes}}}
+CHAPTER {{count, plural, one {# chapter} other {# chapters}}}
+ISSUE {{count, plural, one {# issue} other {# issues}}}
+other {{count, plural, one {# book} other {# books}}}
+}`,
+        },
+        { count: props.series.booksCount, unit: bookUnit.value },
+      ),
+)
 
 const bookOnDeck = computed(() => booksOnDeck.value?.content?.[0])
 

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
 import CreateEdit from './EditMetadata.vue'
+import { mockSeries1 } from '@/mocks/api/handlers/series'
 
 const meta = {
   component: CreateEdit,
@@ -26,5 +27,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  args: {},
+  args: {
+    modelValue: mockSeries1.metadata,
+  },
 }

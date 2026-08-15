@@ -5,6 +5,12 @@ export enum ReadingDirection {
   WEBTOON = 'WEBTOON'
 }
 
+export enum BookUnit {
+  VOLUME = 'VOLUME',
+  CHAPTER = 'CHAPTER',
+  ISSUE = 'ISSUE'
+}
+
 export enum MediaStatus {
   READY = 'READY',
   UNKNOWN = 'UNKNOWN',

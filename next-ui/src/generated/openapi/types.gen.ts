@@ -1047,6 +1047,8 @@ export type SeriesMetadataDto = {
     alternatePublishersLock: boolean;
     alternateTitles: Array<AlternateTitleDto>;
     alternateTitlesLock: boolean;
+    bookUnit: string;
+    bookUnitLock: boolean;
     created: Date;
     genres: Array<string>;
     genresLock: boolean;
@@ -1091,6 +1093,8 @@ export type SeriesMetadataUpdateDto = {
     alternatePublishersLock?: boolean;
     alternateTitles?: Array<AlternateTitleUpdateDto>;
     alternateTitlesLock?: boolean;
+    bookUnit?: BookUnitEnum;
+    bookUnitLock?: boolean;
     genres?: Array<string>;
     genresLock?: boolean;
     language?: string;
@@ -1421,6 +1425,8 @@ export type ScanIntervalEnum = 'DISABLED' | 'HOURLY' | 'EVERY_6H' | 'EVERY_12H' 
 export type SeriesCoverEnum = 'FIRST' | 'FIRST_UNREAD_OR_FIRST' | 'FIRST_UNREAD_OR_LAST' | 'LAST';
 
 export type ReadingDirectionEnum = 'LEFT_TO_RIGHT' | 'RIGHT_TO_LEFT' | 'VERTICAL' | 'WEBTOON';
+
+export type BookUnitEnum = 'VOLUME' | 'CHAPTER' | 'ISSUE';
 
 export type ThumbnailSizeEnum = 'DEFAULT' | 'MEDIUM' | 'LARGE' | 'XLARGE';
 

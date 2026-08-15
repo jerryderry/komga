@@ -10,6 +10,7 @@ class SeriesMetadata(
   titleSort: String = title,
   summary: String = "",
   val readingDirection: ReadingDirection? = null,
+  val bookUnit: BookUnit? = null,
   publisher: String = "",
   alternatePublishers: Set<String> = emptySet(),
   serialization: String = "",
@@ -28,6 +29,7 @@ class SeriesMetadata(
   val titleSortLock: Boolean = false,
   val summaryLock: Boolean = false,
   val readingDirectionLock: Boolean = false,
+  val bookUnitLock: Boolean = false,
   val publisherLock: Boolean = false,
   val alternatePublishersLock: Boolean = false,
   val serializationLock: Boolean = false,
@@ -65,6 +67,7 @@ class SeriesMetadata(
     titleSort: String = this.titleSort,
     summary: String = this.summary,
     readingDirection: ReadingDirection? = this.readingDirection,
+    bookUnit: BookUnit? = this.bookUnit,
     publisher: String = this.publisher,
     alternatePublishers: Set<String> = this.alternatePublishers,
     serialization: String = this.serialization,
@@ -83,6 +86,7 @@ class SeriesMetadata(
     titleSortLock: Boolean = this.titleSortLock,
     summaryLock: Boolean = this.summaryLock,
     readingDirectionLock: Boolean = this.readingDirectionLock,
+    bookUnitLock: Boolean = this.bookUnitLock,
     publisherLock: Boolean = this.publisherLock,
     alternatePublishersLock: Boolean = this.alternatePublishersLock,
     serializationLock: Boolean = this.serializationLock,
@@ -105,6 +109,7 @@ class SeriesMetadata(
     titleSort = titleSort,
     summary = summary,
     readingDirection = readingDirection,
+    bookUnit = bookUnit,
     publisher = publisher,
     alternatePublishers = alternatePublishers,
     serialization = serialization,
@@ -123,6 +128,7 @@ class SeriesMetadata(
     titleSortLock = titleSortLock,
     summaryLock = summaryLock,
     readingDirectionLock = readingDirectionLock,
+    bookUnitLock = bookUnitLock,
     publisherLock = publisherLock,
     alternatePublishersLock = alternatePublishersLock,
     serializationLock = serializationLock,
@@ -155,6 +161,20 @@ class SeriesMetadata(
     WEBTOON,
   }
 
+  /**
+   * What one book of the series represents. Orthogonal to [ReadingDirection], which
+   * describes how pages are laid out: a right-to-left manga can be released by
+   * chapter, and a vertical-scrolling series can be collected into volumes.
+   *
+   * Null means unknown, which is the honest answer for a series whose filenames say
+   * nothing - a collection of one-shots, or a folder named by title alone.
+   */
+  enum class BookUnit {
+    VOLUME,
+    CHAPTER,
+    ISSUE,
+  }
+
   override fun toString(): String =
-    "SeriesMetadata(status=$status, readingDirection=$readingDirection, ageRating=$ageRating, score=$score, releaseDate=$releaseDate, totalBookCount=$totalBookCount, links=$links, alternateTitles=$alternateTitles, statusLock=$statusLock, titleLock=$titleLock, titleSortLock=$titleSortLock, summaryLock=$summaryLock, readingDirectionLock=$readingDirectionLock, publisherLock=$publisherLock, alternatePublishersLock=$alternatePublishersLock, serializationLock=$serializationLock, ageRatingLock=$ageRatingLock, scoreLock=$scoreLock, releaseDateLock=$releaseDateLock, languageLock=$languageLock, genresLock=$genresLock, tagsLock=$tagsLock, totalBookCountLock=$totalBookCountLock, sharingLabelsLock=$sharingLabelsLock, linksLock=$linksLock, alternateTitlesLock=$alternateTitlesLock, seriesId='$seriesId', createdDate=$createdDate, lastModifiedDate=$lastModifiedDate, title='$title', titleSort='$titleSort', summary='$summary', publisher='$publisher', alternatePublishers=$alternatePublishers, serialization='$serialization', language='$language', tags=$tags, genres=$genres, sharingLabels=$sharingLabels)"
+    "SeriesMetadata(status=$status, readingDirection=$readingDirection, bookUnit=$bookUnit, ageRating=$ageRating, score=$score, releaseDate=$releaseDate, totalBookCount=$totalBookCount, links=$links, alternateTitles=$alternateTitles, statusLock=$statusLock, titleLock=$titleLock, titleSortLock=$titleSortLock, summaryLock=$summaryLock, readingDirectionLock=$readingDirectionLock, bookUnitLock=$bookUnitLock, publisherLock=$publisherLock, alternatePublishersLock=$alternatePublishersLock, serializationLock=$serializationLock, ageRatingLock=$ageRatingLock, scoreLock=$scoreLock, releaseDateLock=$releaseDateLock, languageLock=$languageLock, genresLock=$genresLock, tagsLock=$tagsLock, totalBookCountLock=$totalBookCountLock, sharingLabelsLock=$sharingLabelsLock, linksLock=$linksLock, alternateTitlesLock=$alternateTitlesLock, seriesId='$seriesId', createdDate=$createdDate, lastModifiedDate=$lastModifiedDate, title='$title', titleSort='$titleSort', summary='$summary', publisher='$publisher', alternatePublishers=$alternatePublishers, serialization='$serialization', language='$language', tags=$tags, genres=$genres, sharingLabels=$sharingLabels)"
 }

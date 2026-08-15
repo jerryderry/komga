@@ -4,7 +4,8 @@ import { useIntl } from 'vue-intl'
 import { useDisplay } from 'vuetify/framework'
 import { useMessagesStore } from '@/stores/messages'
 
-import EditMetadata from '@/components/series/form/EditMetadata.vue'
+// Not built yet: the series form is the only one that edits anything.
+import EditMetadata from '@/components/EmptyStateConstruction.vue'
 import { commonMessages } from '@/utils/i18n/common-messages'
 import { useUpdateCollection } from '@/colada/collections'
 import type { CollectionDto, CollectionUpdateDto } from '@/generated/openapi'

@@ -187,6 +187,31 @@
                   </v-col>
                 </v-row>
 
+                <!--  Book Unit  -->
+                <v-row>
+                  <v-col cols="12">
+                    <v-select v-model="form.bookUnit"
+                              :items="bookUnits"
+                              :label="$t('dialog.edit_series.field_book_unit')"
+                              :hint="$t('dialog.edit_series.field_book_unit_hint')"
+                              persistent-hint
+                              clearable
+                              filled
+                              :placeholder="!single && mixed.bookUnit ? $t('dialog.edit_series.mixed') : ''"
+                              @input="$v.form.bookUnit.$touch()"
+                              @change="form.bookUnitLock = true"
+                    >
+                      <template v-slot:prepend>
+                        <v-icon :color="form.bookUnitLock ? 'secondary' : ''"
+                                @click="form.bookUnitLock = !form.bookUnitLock"
+                        >
+                          {{ form.bookUnitLock ? 'mdi-lock' : 'mdi-lock-open' }}
+                        </v-icon>
+                      </template>
+                    </v-select>
+                  </v-col>
+                </v-row>
+
                 <v-row>
                   <!--  Publisher  -->
                   <v-col cols="6">
@@ -557,7 +582,7 @@
 import Vue from 'vue'
 import {SeriesStatus} from '@/types/enum-series'
 import {helpers, minValue, requiredIf} from 'vuelidate/lib/validators'
-import {ReadingDirection} from '@/types/enum-books'
+import {BookUnit, ReadingDirection} from '@/types/enum-books'
 import {SeriesDto, SeriesThumbnailDto} from '@/types/komga-series'
 import {ERROR, ErrorEvent} from '@/types/events'
 import DropZone from '@/components/DropZone.vue'
@@ -587,6 +612,8 @@ export default Vue.extend({
         summaryLock: false,
         readingDirection: '',
         readingDirectionLock: false,
+        bookUnit: '',
+        bookUnitLock: false,
         publisher: '',
         publisherLock: false,
         ageRating: undefined as number | undefined,
@@ -609,6 +636,7 @@ export default Vue.extend({
       mixed: {
         status: false,
         readingDirection: false,
+        bookUnit: false,
         publisher: false,
         ageRating: false,
         language: false,
@@ -675,6 +703,7 @@ export default Vue.extend({
       sharingLabels: {},
       ageRating: {minValue: minValue(0)},
       readingDirection: {},
+      bookUnit: {},
       publisher: {},
       totalBookCount: {minValue: minValue(1)},
       links: {},
@@ -689,6 +718,14 @@ export default Vue.extend({
       return Object.keys(ReadingDirection).map(x => (
         {
           text: this.$t(`enums.reading_direction.${x}`),
+          value: x,
+        }),
+      )
+    },
+    bookUnits(): any[] {
+      return Object.keys(BookUnit).map(x => (
+        {
+          text: this.$t(`enums.book_unit.${x}`),
           value: x,
         }),
       )
@@ -778,6 +815,13 @@ export default Vue.extend({
         const readingDirectionLock = this.$_.uniq(series.map(x => x.metadata.readingDirectionLock))
         this.form.readingDirectionLock = readingDirectionLock.length > 1 ? false : readingDirectionLock[0]
 
+        const bookUnit = this.$_.uniq(series.map(x => x.metadata.bookUnit))
+        this.form.bookUnit = bookUnit.length > 1 ? '' : bookUnit[0]
+        this.mixed.bookUnit = bookUnit.length > 1
+
+        const bookUnitLock = this.$_.uniq(series.map(x => x.metadata.bookUnitLock))
+        this.form.bookUnitLock = bookUnitLock.length > 1 ? false : bookUnitLock[0]
+
         const ageRating = this.$_.uniq(series.map(x => x.metadata.ageRating))
         this.form.ageRating = ageRating.length > 1 ? undefined : ageRating[0]
         this.mixed.ageRating = ageRating.length > 1
@@ -846,6 +890,7 @@ export default Vue.extend({
         const metadata = {
           statusLock: this.form.statusLock,
           readingDirectionLock: this.form.readingDirectionLock,
+          bookUnitLock: this.form.bookUnitLock,
           ageRatingLock: this.form.ageRatingLock,
           publisherLock: this.form.publisherLock,
           languageLock: this.form.languageLock,
@@ -861,6 +906,9 @@ export default Vue.extend({
           this.$_.merge(metadata, {status: this.form.status})
         }
 
+        if (this.$v.form?.bookUnit?.$dirty) {
+          this.$_.merge(metadata, {bookUnit: this.form.bookUnit ? this.form.bookUnit : null})
+        }
         if (this.$v.form?.readingDirection?.$dirty) {
           this.$_.merge(metadata, {readingDirection: this.form.readingDirection ? this.form.readingDirection : null})
         }

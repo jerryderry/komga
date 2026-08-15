@@ -97,6 +97,7 @@ class SeriesMetadataDao(
       .set(d.TITLE_SORT, metadata.titleSort)
       .set(d.SUMMARY, metadata.summary)
       .set(d.READING_DIRECTION, metadata.readingDirection?.toString())
+      .set(d.BOOK_UNIT, metadata.bookUnit?.toString())
       .set(d.PUBLISHER, metadata.publisher)
       .set(d.AGE_RATING, metadata.ageRating)
       .set(d.SCORE, metadata.score)
@@ -108,6 +109,7 @@ class SeriesMetadataDao(
       .set(d.TITLE_SORT_LOCK, metadata.titleSortLock)
       .set(d.SUMMARY_LOCK, metadata.summaryLock)
       .set(d.READING_DIRECTION_LOCK, metadata.readingDirectionLock)
+      .set(d.BOOK_UNIT_LOCK, metadata.bookUnitLock)
       .set(d.PUBLISHER_LOCK, metadata.publisherLock)
       .set(d.AGE_RATING_LOCK, metadata.ageRatingLock)
       .set(d.LANGUAGE_LOCK, metadata.languageLock)
@@ -141,6 +143,7 @@ class SeriesMetadataDao(
       .set(d.TITLE_SORT, metadata.titleSort)
       .set(d.SUMMARY, metadata.summary)
       .set(d.READING_DIRECTION, metadata.readingDirection?.toString())
+      .set(d.BOOK_UNIT, metadata.bookUnit?.toString())
       .set(d.PUBLISHER, metadata.publisher)
       .set(d.AGE_RATING, metadata.ageRating)
       .set(d.SCORE, metadata.score)
@@ -152,6 +155,7 @@ class SeriesMetadataDao(
       .set(d.TITLE_SORT_LOCK, metadata.titleSortLock)
       .set(d.SUMMARY_LOCK, metadata.summaryLock)
       .set(d.READING_DIRECTION_LOCK, metadata.readingDirectionLock)
+      .set(d.BOOK_UNIT_LOCK, metadata.bookUnitLock)
       .set(d.PUBLISHER_LOCK, metadata.publisherLock)
       .set(d.AGE_RATING_LOCK, metadata.ageRatingLock)
       .set(d.LANGUAGE_LOCK, metadata.languageLock)
@@ -352,6 +356,10 @@ class SeriesMetadataDao(
       readingDirection?.let {
         SeriesMetadata.ReadingDirection.valueOf(readingDirection)
       },
+    bookUnit =
+      bookUnit?.let {
+        SeriesMetadata.BookUnit.valueOf(bookUnit)
+      },
     publisher = publisher,
     alternatePublishers = alternatePublishers,
     serialization = serialization,
@@ -370,6 +378,7 @@ class SeriesMetadataDao(
     titleSortLock = titleSortLock,
     summaryLock = summaryLock,
     readingDirectionLock = readingDirectionLock,
+    bookUnitLock = bookUnitLock,
     publisherLock = publisherLock,
     alternatePublishersLock = alternatePublishersLock,
     serializationLock = serializationLock,

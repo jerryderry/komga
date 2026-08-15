@@ -437,6 +437,8 @@ class SeriesDtoDao(
     summaryLock = summaryLock,
     readingDirection = readingDirection ?: "",
     readingDirectionLock = readingDirectionLock,
+    bookUnit = bookUnit ?: "",
+    bookUnitLock = bookUnitLock,
     publisher = publisher,
     publisherLock = publisherLock,
     alternatePublishers = alternatePublishers,

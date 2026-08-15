@@ -51,6 +51,7 @@ class SeriesLifecycle(
   private val bookLifecycle: BookLifecycle,
   private val mediaRepository: MediaRepository,
   private val bookMetadataRepository: BookMetadataRepository,
+  private val bookUnitAnalyzer: BookUnitAnalyzer,
   private val seriesRepository: SeriesRepository,
   private val thumbnailsSeriesRepository: ThumbnailSeriesRepository,
   private val seriesMetadataRepository: SeriesMetadataRepository,
@@ -72,15 +73,31 @@ class SeriesLifecycle(
     logger.debug { "Existing books: $books" }
     logger.debug { "Existing metadata: $metadatas" }
 
+    val bookUnit = updateBookUnit(series, books.map { it.name })
+
+    // Numbers the filenames state themselves, used only when the series agrees on a
+    // unit and every file carries a number for it. Anything less and the books keep
+    // their position in the sorted list as their number, as they always have:
+    // numbering half a series from its filenames and the other half from its ordering
+    // would sort it by two incompatible schemes at once.
+    val parsedNumbers =
+      bookUnit
+        ?.let { bookUnitAnalyzer.numbersFor(books.map { it.name }, it) }
+        ?.let { numbers -> books.map { it.id }.zip(numbers).toMap() }
+    if (parsedNumbers != null) logger.debug { "Numbering books for $series from their filenames as $bookUnit" }
+
     val sorted =
       books
         .sortedWith(
-          compareBy(natSortComparator) {
-            it.name
-              .trim()
-              .stripAccents()
-              .replace(whitespacePattern, " ")
-          },
+          if (parsedNumbers != null)
+            compareBy<Book> { parsedNumbers.getValue(it.id) }
+          else
+            compareBy(natSortComparator) {
+              it.name
+                .trim()
+                .stripAccents()
+                .replace(whitespacePattern, " ")
+            },
         ).map { book -> book to metadatas.first { it.bookId == book.id } }
     logger.debug { "Sorted books: $sorted" }
 
@@ -90,17 +107,19 @@ class SeriesLifecycle(
 
     val oldToNew =
       sorted.mapIndexedNotNull { index, (book, metadata) ->
-        if (metadata.numberLock && metadata.numberSortLock)
+        if (metadata.numberLock && metadata.numberSortLock) {
           null
-        else
+        } else {
+          val parsed = parsedNumbers?.getValue(book.id)
           Triple(
             book,
             metadata,
             metadata.copy(
-              number = if (!metadata.numberLock) (index + 1).toString() else metadata.number,
-              numberSort = if (!metadata.numberSortLock) (index + 1).toFloat() else metadata.numberSort,
+              number = if (!metadata.numberLock) parsed?.let { bookUnitAnalyzer.format(it) } ?: (index + 1).toString() else metadata.number,
+              numberSort = if (!metadata.numberSortLock) parsed ?: (index + 1).toFloat() else metadata.numberSort,
             ),
           )
+        }
       }
     bookMetadataRepository.update(oldToNew.map { it.third })
 
@@ -116,6 +135,27 @@ class SeriesLifecycle(
     seriesRepository.findByIdOrNull(series.id)?.let {
       seriesRepository.update(it.copy(bookCount = books.size), false)
     }
+  }
+
+  /**
+   * Re-derives whether the series is divided into volumes, chapters or issues from its
+   * filenames, and stores the answer. Runs on every sort because adding books can
+   * settle a series that was previously ambiguous - or unsettle one that was not.
+   * A locked value is returned untouched, like every other piece of metadata.
+   */
+  private fun updateBookUnit(
+    series: Series,
+    bookNames: List<String>,
+  ): SeriesMetadata.BookUnit? {
+    val metadata = seriesMetadataRepository.findByIdOrNull(series.id) ?: return null
+    if (metadata.bookUnitLock) return metadata.bookUnit
+
+    val detected = bookUnitAnalyzer.detectUnit(bookNames)
+    if (detected != metadata.bookUnit) {
+      logger.info { "Book unit for $series detected as $detected (was ${metadata.bookUnit})" }
+      seriesMetadataRepository.update(metadata.copy(bookUnit = detected))
+    }
+    return detected
   }
 
   fun addBooks(

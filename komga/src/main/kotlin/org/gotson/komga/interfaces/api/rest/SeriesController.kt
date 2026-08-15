@@ -697,6 +697,8 @@ class SeriesController(
           languageLock = languageLock ?: existing.languageLock,
           readingDirection = if (isSet("readingDirection")) readingDirection else existing.readingDirection,
           readingDirectionLock = readingDirectionLock ?: existing.readingDirectionLock,
+          bookUnit = if (isSet("bookUnit")) bookUnit else existing.bookUnit,
+          bookUnitLock = bookUnitLock ?: existing.bookUnitLock,
           publisher = publisher ?: existing.publisher,
           publisherLock = publisherLock ?: existing.publisherLock,
           alternatePublishers =

@@ -227,10 +227,6 @@
     "defaultMessage": "All contributors",
     "description": "Author filter: any role"
   },
-  "4X3RAp": {
-    "defaultMessage": "{count, plural, one {# book} other {# books} }",
-    "description": "Series view: count of books in series"
-  },
   "4g2M9O": {
     "defaultMessage": "No series found",
     "description": "Series picker dialog: no results empty state - title"
@@ -250,10 +246,6 @@
   "5JGOUU": {
     "defaultMessage": "Analyze library",
     "description": "Library analyze dialog: title"
-  },
-  "5Mr64n": {
-    "defaultMessage": "{count, plural, one {# chapter} other {# chapters} }",
-    "description": "Series view: count of chapters in a webtoon series"
   },
   "5Qha5m": {
     "defaultMessage": "Manual ordering",
@@ -386,6 +378,10 @@
   "90yqRq": {
     "defaultMessage": "add library",
     "description": "Add library button: aria label"
+  },
+  "9B/iRq": {
+    "defaultMessage": "Unlock, allowing detection to overwrite this",
+    "description": "Form edit series metadata: unlock field"
   },
   "9TJRkm": {
     "defaultMessage": "Import series metadata",
@@ -743,6 +739,10 @@
     "defaultMessage": "Duplicate page",
     "description": "Unknown Duplicate Page Table: alt description for thumbnail"
   },
+  "Il3plE": {
+    "defaultMessage": "Book unit",
+    "description": "Form edit series metadata: book unit field"
+  },
   "InW6ko": {
     "defaultMessage": "Translations",
     "description": "Translations pop-up menu header"
@@ -883,6 +883,10 @@
     "defaultMessage": "Delete book files",
     "description": "Book delete dialog: title"
   },
+  "Nj5JaP": {
+    "defaultMessage": "Lock, keeping detection from overwriting this",
+    "description": "Form edit series metadata: lock field"
+  },
   "NpjqFA": {
     "defaultMessage": "Try adjusting the filters",
     "description": "Import reading list table: shown when table has no data because of the selected filter - subtitle"
@@ -1002,6 +1006,10 @@
   "RTNaxB": {
     "defaultMessage": "Expand sidebar",
     "description": "Sidebar button: tooltip expand"
+  },
+  "RYC0Xa": {
+    "defaultMessage": "{unit, select, VOLUME {{count, plural, one {# volume} other {# volumes}}} CHAPTER {{count, plural, one {# chapter} other {# chapters}}} ISSUE {{count, plural, one {# issue} other {# issues}}} other {{count, plural, one {# book} other {# books}}} }",
+    "description": "Series view: count of books in series"
   },
   "Rm52xk": {
     "defaultMessage": "Welcome to Komga",
@@ -1135,10 +1143,6 @@
     "defaultMessage": "The 'SeriesGroup' element will be used",
     "description": "Form add/edit library: Metadata - Comicinfo.xml collections - information tooltip"
   },
-  "VhMXcu": {
-    "defaultMessage": "{total, plural, one {{count} / # book} other {{count} / # books} }",
-    "description": "Series view: count of books in series with total count"
-  },
   "Vpmsx0": {
     "defaultMessage": "Series books",
     "description": "File name picker dialog: series books table header"
@@ -1158,6 +1162,10 @@
   "W3BUf7": {
     "defaultMessage": "I understand",
     "description": "Force Sync API Key dialog: confirmation button text"
+  },
+  "W9WB3s": {
+    "defaultMessage": "{unit, select, VOLUME {{total, plural, one {{count} / # volume} other {{count} / # volumes}}} CHAPTER {{total, plural, one {{count} / # chapter} other {{count} / # chapters}}} ISSUE {{total, plural, one {{count} / # issue} other {{count} / # issues}}} other {{total, plural, one {{count} / # book} other {{count} / # books}}} }",
+    "description": "Series view: count of books in series with total count"
   },
   "WADecv": {
     "defaultMessage": "Installed",
@@ -1702,6 +1710,18 @@
   "egrxd6": {
     "defaultMessage": "User created: {email}",
     "description": "Snackbar notification shown upon successful user creation"
+  },
+  "enum.BookUnit.CHAPTER": {
+    "defaultMessage": "Chapter",
+    "description": "Book unit: CHAPTER"
+  },
+  "enum.BookUnit.ISSUE": {
+    "defaultMessage": "Issue",
+    "description": "Book unit: ISSUE"
+  },
+  "enum.BookUnit.VOLUME": {
+    "defaultMessage": "Volume",
+    "description": "Book unit: VOLUME"
   },
   "enum.MediaProfile.DIVINA": {
     "defaultMessage": "DiViNa",
@@ -2410,6 +2430,10 @@
   "s1nzhU": {
     "defaultMessage": "Library name",
     "description": "Form add/edit library: General - library name"
+  },
+  "sBxR1U": {
+    "defaultMessage": "What one book of this series is. Detected from the filenames on each scan unless locked.",
+    "description": "Form edit series metadata: book unit hint"
   },
   "sGsWvI": {
     "defaultMessage": "Change password",
