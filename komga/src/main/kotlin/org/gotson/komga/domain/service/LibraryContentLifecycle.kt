@@ -50,6 +50,7 @@ class LibraryContentLifecycle(
   private val bookLifecycle: BookLifecycle,
   private val mediaRepository: MediaRepository,
   private val seriesLifecycle: SeriesLifecycle,
+  private val bookUnitAnalyzer: BookUnitAnalyzer,
   private val collectionLifecycle: SeriesCollectionLifecycle,
   private val readListLifecycle: ReadListLifecycle,
   private val sidecarRepository: SidecarRepository,
@@ -216,10 +217,30 @@ class LibraryContentLifecycle(
       }
 
       // for all series where books have been removed or added, trigger a sort and refresh metadata
-      seriesToSortAndRefresh.distinctBy { it.id }.forEach {
+      val sorted = seriesToSortAndRefresh.distinctBy { it.id }
+      sorted.forEach {
         seriesLifecycle.sortBooks(it)
         taskEmitter.refreshSeriesMetadata(it.id)
       }
+
+      // A series only gets sorted when its books change, so a library that was scanned
+      // before book units existed would never acquire one, and its books would keep the
+      // positional numbers they were given. Catch those up here: detection is a cheap
+      // read of the filenames, and once a series agrees with what is stored this does
+      // nothing on subsequent scans.
+      val alreadySorted = sorted.map { it.id }.toSet()
+      seriesRepository
+        .findAllByLibraryId(library.id)
+        .filterNot { alreadySorted.contains(it.id) }
+        .forEach { series ->
+          val metadata = seriesMetadataRepository.findByIdOrNull(series.id) ?: return@forEach
+          if (metadata.bookUnitLock) return@forEach
+          val detected = bookUnitAnalyzer.detectUnit(bookRepository.findAllBySeriesId(series.id).map { it.name })
+          if (detected != metadata.bookUnit) {
+            logger.info { "Book unit for $series changed to $detected, re-sorting" }
+            seriesLifecycle.sortBooks(series)
+          }
+        }
 
       val existingSidecars = sidecarRepository.findAll()
       scanResult.sidecars.forEach { newSidecar ->
