@@ -61,7 +61,20 @@
           >
             <v-col cols="auto">
               <div class="text-body-medium">
-                <span v-if="series.metadata.totalBookCount">{{
+                <span v-if="isWebtoon">{{
+                  $formatMessage(
+                    {
+                      description: 'Series view: count of chapters in a webtoon series',
+                      defaultMessage: `{count, plural,
+one {# chapter}
+other {# chapters}
+}`,
+                      id: '5Mr64n',
+                    },
+                    { count: series.booksCount },
+                  )
+                }}</span>
+                <span v-else-if="series.metadata.totalBookCount">{{
                   $formatMessage(
                     {
                       description: 'Series view: count of books in series with total count',
@@ -269,6 +282,12 @@ const { unreadCount, isRead } = useSeries(() => props.series)
 const { getFirstBookInParentQuery } = useBooks(() => props.series)
 
 const { data: booksOnDeck } = getFirstBookInParentQuery(true)
+// A webtoon has no volumes to count towards, and its files are episodes rather
+// than books. Komga models both the same way - one file is one book - so the
+// distinction is presentational, driven by the reading direction the series
+// already carries.
+const isWebtoon = computed(() => props.series.metadata.readingDirection === 'WEBTOON')
+
 const bookOnDeck = computed(() => booksOnDeck.value?.content?.[0])
 
 const alternateTitles = computed(() =>

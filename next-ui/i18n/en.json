@@ -251,6 +251,10 @@
     "defaultMessage": "Analyze library",
     "description": "Library analyze dialog: title"
   },
+  "5Mr64n": {
+    "defaultMessage": "{count, plural, one {# chapter} other {# chapters} }",
+    "description": "Series view: count of chapters in a webtoon series"
+  },
   "5Qha5m": {
     "defaultMessage": "Manual ordering",
     "description": "Read List view: manual ordering"
